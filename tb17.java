@@ -1,5 +1,4 @@
 package tb17;
-
 import java.io.*;
 import Lista.*;
 import java.util.*;
@@ -12,6 +11,7 @@ public class tb17 {
 	public static boolean visitados[] = new boolean[tamanho];
 	public static int seqCidade[] = new int[tamanho];
 	public static JFrame janela = new JFrame();
+	public static double melhorScore;
 
 	public static void PlotaGrafo() {
 		janela.setSize(750, 750);
@@ -31,19 +31,10 @@ public class tb17 {
 			int j = random.nextInt(tamanho);
 
 			int valor = l.buscaValor(j).value;
-			// troca o conteúdo dos índices i e j do vetor
+			// troca o conteÃºdo dos Ã­ndices i e j do vetor
 			int melhorPosicao = mudaPosicao(j, m, l, valor, SomaAnt);
 			l.insereIndice(valor, melhorPosicao);
 			Soma = calculaDistancia(m, l);
-			Node atual = l.top;
-			int i = 0;
-			while (atual != null) {
-				seqCidade[i] = atual.value;
-				i++;
-				atual = atual.next;
-			}
-			janela.repaint();
-			try { Thread.sleep (10); } catch (InterruptedException ex) {}
 			if (Soma > SomaAnt) {
 				l.removePorIndice(melhorPosicao);
 				l.insereIndice(valor, j);
@@ -67,8 +58,17 @@ public class tb17 {
 			if (Soma < SomaAnt) {
 				SomaAnt = Soma;
 				melhorIndice = j;
+				melhorScore = Soma;
+				Node atual = l.top;
+				int w = 0;
+				while (atual != null) {
+					seqCidade[w] = atual.value;
+					w++;
+					atual = atual.next;
+				}
+				janela.repaint();
+				try {Thread.sleep(10);} catch (InterruptedException ex) {}
 			}
-
 			removido = l.removeList(valor);
 			j++;
 		}
@@ -90,11 +90,14 @@ public class tb17 {
 			}
 
 			Soma = calculaDistancia(m, l);
+			melhorScore = Soma;
 
 			if (Soma < SomaAnt) {
 				SomaAnt = Soma;
 				melhor.clean();
 				melhor.clonar(l);
+				janela.repaint();
+				try { Thread.sleep(200);} catch (InterruptedException ex) {}
 			}
 			l.clean();
 		}
@@ -133,8 +136,6 @@ public class tb17 {
 			i++;
 			atual = atual.next;
 		}
-		janela.repaint();
-		try { Thread.sleep (200); } catch (InterruptedException ex) {}
 		return l;
 	}
 
@@ -152,7 +153,7 @@ public class tb17 {
 	}
 
 	public static void main(String[] args) throws IOException {
-		FileReader arq = new FileReader("C:\\Users\\maluf\\Desktop\\Bagunça\\TB17\\src\\new.txt");
+		FileReader arq = new FileReader("/home/2018.1.08.015/Desktop/tb17/src/new.txt");
 
 		BufferedReader lerArq = new BufferedReader(arq);
 
@@ -182,10 +183,10 @@ public class tb17 {
 		}
 
 		Lista cidades = new Lista();
-		for(i = 0; i < tamanho; i++) {
+		for (i = 0; i < tamanho; i++) {
 			cidades.toList(i);
 		}
-		
+
 		Node atual = cidades.top;
 		i = 0;
 		while (atual != null) {
@@ -194,9 +195,9 @@ public class tb17 {
 			atual = atual.next;
 		}
 		PlotaGrafo();
-		try { Thread.sleep (400); } catch (InterruptedException ex) {}
+		try { Thread.sleep(400);} catch (InterruptedException ex) {}
 		cidades.clean();
-		
+
 		// aplica o metodo do vizinhoMaisProximo procurando a melhor origem
 		cidades = procuraMaiorOrigem(matrizAdj, cidades, visitados);
 		double SomaAnt = calculaDistancia(matrizAdj, cidades);
@@ -208,11 +209,11 @@ public class tb17 {
 			i++;
 			atual = atual.next;
 		}
-		
+
 		// aplica o metodo que procura a melhor posicao para determinadas cidades
 		cidades = procuraMelhorPosicao(matrizAdj, cidades, SomaAnt);
 		double Soma = calculaDistancia(matrizAdj, cidades);
-		System.out.println("Distância Final: " + Soma);
+		System.out.println("DistÃ¢ncia Final: " + Soma);
 
 	}
 }
